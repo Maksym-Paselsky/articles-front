@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-export const BASE_URL = "https://articles-m-a309d0f7d549.herokuapp.com/";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const fetchArticles = createAsyncThunk(
   "articles/fetchArticles",
@@ -11,21 +11,13 @@ export const fetchArticles = createAsyncThunk(
   }
 );
 
-export const fetchArticle = createAsyncThunk(
-  "articles/fetchArticle",
-  async (params: { id: string }) => {
-    const response = await fetch(`${BASE_URL}article/${params.id}`);
-    const data = await response.json();
-    return data;
-  }
-);
-
 export const createArticle = createAsyncThunk(
   "articles/createArticle",
-  async (params: { article: any }) => {
+  async (params: { article: any; token: any }) => {
     const response = await fetch(`${BASE_URL}article`, {
       method: "POST",
       headers: {
+        Authorization: `Bearer ${params.token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(params.article),
@@ -37,10 +29,12 @@ export const createArticle = createAsyncThunk(
 
 export const updateArticle = createAsyncThunk(
   "articles/updateArticle",
-  async (params: { article: any }) => {
+  async (params: { article: any; token: string }) => {
     const response = await fetch(`${BASE_URL}article/${params.article._id}`, {
       method: "PATCH",
+
       headers: {
+        Authorization: `Bearer ${params.token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(params.article),
@@ -52,9 +46,13 @@ export const updateArticle = createAsyncThunk(
 
 export const deleteArticle = createAsyncThunk(
   "articles/deleteArticle",
-  async (params: { id: string }) => {
+  async (params: { id: string; token: any }) => {
     const response = await fetch(`${BASE_URL}article/${params.id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${params.token}`,
+        "Content-Type": "application/json",
+      },
     });
     const data = await response.json();
     return data;

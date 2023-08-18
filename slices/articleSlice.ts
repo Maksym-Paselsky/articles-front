@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   createArticle,
   fetchArticles,
-  fetchArticle,
   updateArticle,
   deleteArticle,
 } from "@/thunks/articleThunk";
@@ -30,9 +29,6 @@ export const articleSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchArticles.fulfilled, (state, action) => {
       return action.payload;
-    });
-    builder.addCase(fetchArticle.fulfilled, (state, action) => {
-      return [action.payload];
     });
     builder.addCase(createArticle.fulfilled, (state, action) => {
       return [action.payload, ...state];

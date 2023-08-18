@@ -1,28 +1,21 @@
 import { Article } from "../slices/articleSlice";
 import { AppDispatch } from "../store";
-import { updateArticle } from "../thunks/articleThunk";
+import { createArticle, updateArticle } from "../thunks/articleThunk";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
-const ModalUpdate = ({
-  article,
-  closeModal,
-}: {
-  article?: Article;
-  closeModal: any;
-}) => {
+const ModalCreate = ({ closeModal }: { closeModal: any }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const [title, setTitle] = useState(article?.title || "");
-  const [source, setSource] = useState(article?.source || "");
-  const [category, setCategory] = useState(article?.category || "");
-  const [description, setDescription] = useState(article?.description || "");
-  const [image, setImage] = useState(article?.image || "");
+  const [title, setTitle] = useState("");
+  const [source, setSource] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+  const [image, setImage] = useState("");
 
-  const update = (e: { preventDefault: () => void }) => {
+  const create = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    const updatedArticle = {
-      ...article,
+    const newArticle = {
       title,
       source,
       category,
@@ -30,8 +23,8 @@ const ModalUpdate = ({
       image,
     };
     dispatch(
-      updateArticle({
-        article: updatedArticle,
+      createArticle({
+        article: newArticle,
         token: localStorage.getItem("token") || "",
       })
     );
@@ -49,7 +42,7 @@ const ModalUpdate = ({
           {/* <!-- Modal header --> */}
           <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Update Item
+              Create Item
             </h3>
             <button
               type="button"
@@ -162,10 +155,10 @@ const ModalUpdate = ({
             <div className="flex items-center space-x-4">
               <button
                 type="submit"
-                onClick={update}
+                onClick={create}
                 className="text-blue  bg-slate-300 bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                Update item
+                Create Item
               </button>
             </div>
           </form>
@@ -175,4 +168,4 @@ const ModalUpdate = ({
   );
 };
 
-export default ModalUpdate;
+export default ModalCreate;

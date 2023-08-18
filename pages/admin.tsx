@@ -2,24 +2,22 @@ import { NextPage } from "next";
 import { useSelector, useDispatch } from "react-redux";
 
 import { AppDispatch, RootState } from "../store";
-
-import {
-  fetchArticle,
-  fetchArticles,
-  updateArticle,
-  deleteArticle,
-} from "../thunks/articleThunk";
+import { fetchArticles } from "../thunks/articleThunk";
 import { useEffect, useState } from "react";
-import { Article } from "@/slices/articleSlice";
-import UpdateModal from "../components/updateModal";
-import { DeleteModal } from "@/components/deleteModal";
+import { Article } from "../slices/articleSlice";
+import { useRouter } from "next/router";
+import { ModalDelete } from "../components/deleteModal";
+import ModalUpdate from "../components/updateModal";
+import ModalCreate from "../components/addNewModal";
 
 const Admin: NextPage = () => {
   const dispatch: AppDispatch = useDispatch();
+  const router = useRouter();
   const articles = useSelector((state: RootState) => state.articles);
 
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [article, setArticle] = useState<Article | undefined>(undefined);
 
   const closeModal = () => {
@@ -28,8 +26,14 @@ const Admin: NextPage = () => {
   const closeDeleteModal = () => {
     setIsDeleteOpen(false);
   };
+  const closeCreateModal = () => {
+    setIsCreateOpen(false);
+  };
 
   useEffect(() => {
+    if (localStorage.getItem("token") === null) {
+      router.push("/login");
+    }
     dispatch(fetchArticles());
   }, [dispatch, isUpdateOpen]);
 
@@ -55,7 +59,7 @@ const Admin: NextPage = () => {
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                           d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                           clip-rule="evenodd"
                         />
@@ -73,6 +77,7 @@ const Admin: NextPage = () => {
               <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
                 <button
                   type="button"
+                  onClick={() => setIsCreateOpen(true)}
                   id="createProductModalButton"
                   data-modal-target="createProductModal"
                   data-modal-toggle="createProductModal"
@@ -87,7 +92,7 @@ const Admin: NextPage = () => {
                   >
                     <path
                       clip-rule="evenodd"
-                      fill-rule="evenodd"
+                      fillRule="evenodd"
                       d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
                     />
                   </svg>
@@ -108,7 +113,7 @@ const Admin: NextPage = () => {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
                         clip-rule="evenodd"
                       />
@@ -123,10 +128,19 @@ const Admin: NextPage = () => {
                     >
                       <path
                         clip-rule="evenodd"
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                       />
                     </svg>
+                  </button>
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem("token");
+                      router.push("/login");
+                    }}
+                    className="border-2 border-yellow-600 rounded-lg px-3 py-2 text-yellow-400 cursor-pointer hover:bg-yellow-600 hover:text-yellow-200"
+                  >
+                    LOG OUT
                   </button>
                   <div
                     id="filterDropdown"
@@ -141,65 +155,6 @@ const Admin: NextPage = () => {
                     >
                       <li className="flex items-center">
                         <input
-                          id="apple"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        />
-                        <label
-                          htmlFor="apple"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >
-                          Apple (56)
-                        </label>
-                      </li>
-                      <li className="flex items-center">
-                        <input
-                          id="fitbit"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        />
-                        <label
-                          htmlFor="fitbit"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >
-                          Fitbit (56)
-                        </label>
-                      </li>
-                      <li className="flex items-center">
-                        <input
-                          id="dell"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        />
-                        <label
-                          htmlFor="dell"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >
-                          Dell (56)
-                        </label>
-                      </li>
-
-                      <li className="flex items-center">
-                        <input
-                          id="sony"
-                          type="checkbox"
-                          value=""
-                          className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                        />
-                        <label
-                          htmlFor="sony"
-                          className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-                        >
-                          Sony (234)
-                        </label>
-                      </li>
-
-                      <li className="flex items-center">
-                        <input
-                          id="microsoft"
                           type="checkbox"
                           value=""
                           className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
@@ -288,7 +243,7 @@ const Admin: NextPage = () => {
                                   >
                                     <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
                                     <path
-                                      fill-rule="evenodd"
+                                      fillRule="evenodd"
                                       clip-rule="evenodd"
                                       d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
                                     />
@@ -316,7 +271,7 @@ const Admin: NextPage = () => {
                                     aria-hidden="true"
                                   >
                                     <path
-                                      fill-rule="evenodd"
+                                      fillRule="evenodd"
                                       clip-rule="evenodd"
                                       fill="currentColor"
                                       d="M6.09922 0.300781C5.93212 0.30087 5.76835 0.347476 5.62625 0.435378C5.48414 0.523281 5.36931 0.649009 5.29462 0.798481L4.64302 2.10078H1.59922C1.36052 2.10078 1.13161 2.1956 0.962823 2.36439C0.79404 2.53317 0.699219 2.76209 0.699219 3.00078C0.699219 3.23948 0.79404 3.46839 0.962823 3.63718C1.13161 3.80596 1.36052 3.90078 1.59922 3.90078V12.9008C1.59922 13.3782 1.78886 13.836 2.12643 14.1736C2.46399 14.5111 2.92183 14.7008 3.39922 14.7008H10.5992C11.0766 14.7008 11.5344 14.5111 11.872 14.1736C12.2096 13.836 12.3992 13.3782 12.3992 12.9008V3.90078C12.6379 3.90078 12.8668 3.80596 13.0356 3.63718C13.2044 3.46839 13.2992 3.23948 13.2992 3.00078C13.2992 2.76209 13.2044 2.53317 13.0356 2.36439C12.8668 2.1956 12.6379 2.10078 12.3992 2.10078H9.35542L8.70382 0.798481C8.62913 0.649009 8.5143 0.523281 8.37219 0.435378C8.23009 0.347476 8.06631 0.30087 7.89922 0.300781H6.09922ZM4.29922 5.70078C4.29922 5.46209 4.39404 5.23317 4.56282 5.06439C4.73161 4.8956 4.96052 4.80078 5.19922 4.80078C5.43791 4.80078 5.66683 4.8956 5.83561 5.06439C6.0044 5.23317 6.09922 5.46209 6.09922 5.70078V11.1008C6.09922 11.3395 6.0044 11.5684 5.83561 11.7372C5.66683 11.906 5.43791 12.0008 5.19922 12.0008C4.96052 12.0008 4.73161 11.906 4.56282 11.7372C4.39404 11.5684 4.29922 11.3395 4.29922 11.1008V5.70078ZM8.79922 4.80078C8.56052 4.80078 8.33161 4.8956 8.16282 5.06439C7.99404 5.23317 7.89922 5.46209 7.89922 5.70078V11.1008C7.89922 11.3395 7.99404 11.5684 8.16282 11.7372C8.33161 11.906 8.56052 12.0008 8.79922 12.0008C9.03791 12.0008 9.26683 11.906 9.43561 11.7372C9.6044 11.5684 9.69922 11.3395 9.69922 11.1008V5.70078C9.69922 5.46209 9.6044 5.23317 9.43561 5.06439C9.26683 4.8956 9.03791 4.80078 8.79922 4.80078Z"
@@ -331,122 +286,6 @@ const Admin: NextPage = () => {
                       </tr>
                     );
                   })}
-
-                  <tr className="border-b dark:border-gray-700">
-                    <th
-                      scope="row"
-                      className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                    >
-                      Monitor BenQ EX2710Q
-                    </th>
-                    <td className="px-4 py-3">TV/Monitor</td>
-                    <td className="px-4 py-3">BenQ</td>
-                    <td className="px-4 py-3 max-w-[12rem] truncate">
-                      What is a product description? A product description
-                      describes a product.
-                    </td>
-                    <td className="px-4 py-3">$499</td>
-                    <td className="px-4 py-3 flex items-center justify-end">
-                      <button
-                        id="benq-ex2710q-dropdown-button"
-                        data-dropdown-toggle="benq-ex2710q-dropdown"
-                        className="inline-flex items-center text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 p-1.5 dark:hover-bg-gray-800 text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
-                        type="button"
-                      >
-                        <svg
-                          className="w-5 h-5"
-                          aria-hidden="true"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                        </svg>
-                      </button>
-                      <div
-                        id="benq-ex2710q-dropdown"
-                        className="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
-                      >
-                        <ul
-                          className="py-1 text-sm"
-                          aria-labelledby="benq-ex2710q-dropdown-button"
-                        >
-                          <li>
-                            <button
-                              type="button"
-                              data-modal-target="updateProductModal"
-                              data-modal-toggle="updateProductModal"
-                              className="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-gray-700 dark:text-gray-200"
-                            >
-                              <svg
-                                className="w-4 h-4 mr-2"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                              >
-                                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                                <path
-                                  fill-rule="evenodd"
-                                  clip-rule="evenodd"
-                                  d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-                                />
-                              </svg>
-                              Edit
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              type="button"
-                              data-modal-target="readProductModal"
-                              data-modal-toggle="readProductModal"
-                              className="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-gray-700 dark:text-gray-200"
-                            >
-                              <svg
-                                className="w-4 h-4 mr-2"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                              >
-                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                <path
-                                  fill-rule="evenodd"
-                                  clip-rule="evenodd"
-                                  d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                                />
-                              </svg>
-                              Preview
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              type="button"
-                              data-modal-target="deleteModal"
-                              data-modal-toggle="deleteModal"
-                              className="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500 dark:hover:text-red-400"
-                            >
-                              <svg
-                                className="w-4 h-4 mr-2"
-                                viewBox="0 0 14 15"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                aria-hidden="true"
-                              >
-                                <path
-                                  fill-rule="evenodd"
-                                  clip-rule="evenodd"
-                                  fill="currentColor"
-                                  d="M6.09922 0.300781C5.93212 0.30087 5.76835 0.347476 5.62625 0.435378C5.48414 0.523281 5.36931 0.649009 5.29462 0.798481L4.64302 2.10078H1.59922C1.36052 2.10078 1.13161 2.1956 0.962823 2.36439C0.79404 2.53317 0.699219 2.76209 0.699219 3.00078C0.699219 3.23948 0.79404 3.46839 0.962823 3.63718C1.13161 3.80596 1.36052 3.90078 1.59922 3.90078V12.9008C1.59922 13.3782 1.78886 13.836 2.12643 14.1736C2.46399 14.5111 2.92183 14.7008 3.39922 14.7008H10.5992C11.0766 14.7008 11.5344 14.5111 11.872 14.1736C12.2096 13.836 12.3992 13.3782 12.3992 12.9008V3.90078C12.6379 3.90078 12.8668 3.80596 13.0356 3.63718C13.2044 3.46839 13.2992 3.23948 13.2992 3.00078C13.2992 2.76209 13.2044 2.53317 13.0356 2.36439C12.8668 2.1956 12.6379 2.10078 12.3992 2.10078H9.35542L8.70382 0.798481C8.62913 0.649009 8.5143 0.523281 8.37219 0.435378C8.23009 0.347476 8.06631 0.30087 7.89922 0.300781H6.09922ZM4.29922 5.70078C4.29922 5.46209 4.39404 5.23317 4.56282 5.06439C4.73161 4.8956 4.96052 4.80078 5.19922 4.80078C5.43791 4.80078 5.66683 4.8956 5.83561 5.06439C6.0044 5.23317 6.09922 5.46209 6.09922 5.70078V11.1008C6.09922 11.3395 6.0044 11.5684 5.83561 11.7372C5.66683 11.906 5.43791 12.0008 5.19922 12.0008C4.96052 12.0008 4.73161 11.906 4.56282 11.7372C4.39404 11.5684 4.29922 11.3395 4.29922 11.1008V5.70078ZM8.79922 4.80078C8.56052 4.80078 8.33161 4.8956 8.16282 5.06439C7.99404 5.23317 7.89922 5.46209 7.89922 5.70078V11.1008C7.89922 11.3395 7.99404 11.5684 8.16282 11.7372C8.33161 11.906 8.56052 12.0008 8.79922 12.0008C9.03791 12.0008 9.26683 11.906 9.43561 11.7372C9.6044 11.5684 9.69922 11.3395 9.69922 11.1008V5.70078C9.69922 5.46209 9.6044 5.23317 9.43561 5.06439C9.26683 4.8956 9.03791 4.80078 8.79922 4.80078Z"
-                                />
-                              </svg>
-                              Delete
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
-                    </td>
-                  </tr>
                 </tbody>
               </table>
             </div>
@@ -479,7 +318,7 @@ const Admin: NextPage = () => {
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
                         clip-rule="evenodd"
                       />
@@ -541,7 +380,7 @@ const Admin: NextPage = () => {
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                         clip-rule="evenodd"
                       />
@@ -555,151 +394,18 @@ const Admin: NextPage = () => {
       </section>
 
       {/* <!-- Modal --> */}
-      <div
-        id="createProductModal"
-        aria-hidden="true"
-        className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
-      >
-        <div className="relative p-4 w-full max-w-2xl max-h-full">
-          {/* <!-- Modal content --> */}
-          <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-            {/* <!-- Modal header --> */}
-            <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Add Product
-              </h3>
-              <button
-                type="button"
-                className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                data-modal-target="createProductModal"
-                data-modal-toggle="createProductModal"
-              >
-                <svg
-                  aria-hidden="true"
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                <span className="sr-only">Close modal</span>
-              </button>
-            </div>
-            {/* <!-- Modal body --> */}
-            <form action="#">
-              <div className="grid gap-4 mb-4 sm:grid-cols-2">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    id="name"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    placeholder="Type product name"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="brand"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Brand
-                  </label>
-                  <input
-                    type="text"
-                    name="brand"
-                    id="brand"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    placeholder="Product brand"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="price"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Price
-                  </label>
-                  <input
-                    type="number"
-                    name="price"
-                    id="price"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    placeholder="$2999"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="category"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Category
-                  </label>
-                  <select
-                    id="category"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  >
-                    <option>Select category</option>
-                    <option value="TV">TV/Monitors</option>
-                    <option value="PC">PC</option>
-                    <option value="GA">Gaming/Console</option>
-                    <option value="PH">Phones</option>
-                  </select>
-                </div>
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="description"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Description
-                  </label>
-                  <textarea
-                    id="description"
-                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    placeholder="Write product description here"
-                  ></textarea>
-                </div>
-              </div>
-              <button
-                type="submit"
-                className="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-              >
-                <svg
-                  className="mr-1 -ml-1 w-6 h-6"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                Add new product
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+      {isCreateOpen && (
+        <ModalCreate closeModal={closeCreateModal}></ModalCreate>
+      )}
+
       {isUpdateOpen && article && (
-        <UpdateModal article={article} closeModal={closeModal}></UpdateModal>
+        <ModalUpdate article={article} closeModal={closeModal}></ModalUpdate>
       )}
       {isDeleteOpen && article && (
-        <DeleteModal
+        <ModalDelete
           article={article}
           closeModal={closeDeleteModal}
-        ></DeleteModal>
+        ></ModalDelete>
       )}
     </div>
   );
