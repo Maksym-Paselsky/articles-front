@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
 import Date from "../components/date";
+import Head from "next/head";
 
 export default function Home() {
   const dispatch: AppDispatch = useDispatch();
@@ -15,6 +16,9 @@ export default function Home() {
 
   return (
     <>
+      <Head>
+        <title>News</title>
+      </Head>
       <div className="flex items-center justify-center  p-3 w-1/1">
         <div className="w-full md:w-1/2">
           <form className="flex items-center">
