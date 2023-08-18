@@ -15,7 +15,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row items-center justify-end space-y-3 md:space-y-0 md:space-x-4 p-4 w-1/2">
+      <div className="flex items-center justify-center  p-3 w-1/1">
         <div className="w-full md:w-1/2">
           <form className="flex items-center">
             <label htmlFor="simple-search" className="sr-only">
