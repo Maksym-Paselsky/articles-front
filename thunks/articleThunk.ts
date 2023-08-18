@@ -5,7 +5,7 @@ export const BASE_URL = "https://articles-m-a309d0f7d549.herokuapp.com/";
 export const fetchArticles = createAsyncThunk(
   "articles/fetchArticles",
   async () => {
-    const response = await fetch(`${BASE_URL}articles`);
+    const response = await fetch(`${BASE_URL}article`);
     const data = await response.json();
     return data;
   }
@@ -14,7 +14,7 @@ export const fetchArticles = createAsyncThunk(
 export const fetchArticle = createAsyncThunk(
   "articles/fetchArticle",
   async (params: { id: string }) => {
-    const response = await fetch(`${BASE_URL}articles/${params.id}`);
+    const response = await fetch(`${BASE_URL}article/${params.id}`);
     const data = await response.json();
     return data;
   }
@@ -23,7 +23,7 @@ export const fetchArticle = createAsyncThunk(
 export const createArticle = createAsyncThunk(
   "articles/createArticle",
   async (params: { article: any }) => {
-    const response = await fetch(`${BASE_URL}articles`, {
+    const response = await fetch(`${BASE_URL}article`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,7 +38,7 @@ export const createArticle = createAsyncThunk(
 export const updateArticle = createAsyncThunk(
   "articles/updateArticle",
   async (params: { article: any }) => {
-    const response = await fetch(`${BASE_URL}articles/${params.article._id}`, {
+    const response = await fetch(`${BASE_URL}article/${params.article._id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -53,7 +53,7 @@ export const updateArticle = createAsyncThunk(
 export const deleteArticle = createAsyncThunk(
   "articles/deleteArticle",
   async (params: { id: string }) => {
-    const response = await fetch(`${BASE_URL}articles/${params.id}`, {
+    const response = await fetch(`${BASE_URL}article/${params.id}`, {
       method: "DELETE",
     });
     const data = await response.json();

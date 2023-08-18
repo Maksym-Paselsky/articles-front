@@ -22,6 +22,7 @@ export interface Article {
 }
 
 const initialState: Article[] = [];
+
 export const articleSlice = createSlice({
   name: "articles",
   initialState,
@@ -56,6 +57,5 @@ export const articleSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const {} = articleSlice.actions;
 
 export default articleSlice.reducer;
