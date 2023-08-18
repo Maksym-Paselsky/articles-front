@@ -35,7 +35,7 @@ const Admin: NextPage = () => {
       router.push("/login");
     }
     dispatch(fetchArticles());
-  }, [dispatch, isUpdateOpen]);
+  }, [dispatch, isUpdateOpen, router]);
 
   return (
     <div className="w-screen">

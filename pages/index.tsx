@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <div className="flex flex-wrap gap-3 w-full justify-center items-center h-full my-10">
       {articles.map((item: any) => (
-        <div className="max-w-sm w-2/4 lg:max-w-full lg:flex  ">
+        <div key={item._id} className="max-w-sm w-2/4 lg:max-w-full lg:flex  ">
           <div className="h-48 lg:h-auto lg:w-48 flex-none bg-cover relative rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden">
             <Image
               fill={true}
