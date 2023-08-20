@@ -4,8 +4,19 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const fetchArticles = createAsyncThunk(
   "articles/fetchArticles",
+  async (params: { search: string; offset: number; category?: string }) => {
+    const response = await fetch(
+      `${BASE_URL}article?s=${params.search}&offset=${params.offset}&category=${params?.category}`
+    );
+    const data = await response.json();
+    return data;
+  }
+);
+
+export const fetchCategories = createAsyncThunk(
+  "articles/fetchCategories",
   async () => {
-    const response = await fetch(`${BASE_URL}article`);
+    const response = await fetch(`${BASE_URL}article/categories`);
     const data = await response.json();
     return data;
   }
